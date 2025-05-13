@@ -1,3 +1,10 @@
+/*
+One of the most important functions is the createHTMLStructure, it works by recursively searching through a json structure
+and return an html element or array of elements if it is iterating through an object or array. The main thing is that it takes 
+a function as a parameter and calls that function when each element is created. The parameters are the html element, the data used to construct the element and
+a replaceMe function that can be used to mutate the original json structure used to generate these elements. Replace me simply replaces the data with the passed in value
+*/
+
 
 
 const dataStructureContainer = document.getElementById('data-structure-container')
@@ -21,11 +28,14 @@ async function fetchJSON(url) {
 
 
 
-
-function createHTMLStructure(json) {
+function createHTMLStructure(json, elementCreationFunction=()=>{}) {
 	if (typeof json !== 'object') {
 		console.error(json)
 		throw new Error("json is not a valid object");
+	}
+	if (typeof elementCreationFunction !== 'function') {
+		console.error(elementCreationFunction)
+		throw new Error("elementCreationFunction is not a function");
 	}
 
 	const createObjectElement = (elements, keys)=>{
@@ -68,7 +78,7 @@ function createHTMLStructure(json) {
 
 		const topBracket = document.createElement('div')
 		topBracket.style.height = '8px'
-		topBracket.style.border = 'solid white 2px'
+		topBracket.style.border = 'solid magenta 2px'
 		topBracket.style.borderRadius = '3px 3px 0 0'
 		topBracket.style.borderBottom = '0'
 		root.appendChild(topBracket)
@@ -92,7 +102,7 @@ function createHTMLStructure(json) {
 
 		const bottomBracket = document.createElement('div')
 		bottomBracket.style.height = '8px'
-		bottomBracket.style.border = 'solid white 2px'
+		bottomBracket.style.border = 'solid magenta 2px'
 		bottomBracket.style.borderRadius = '0 0 3px 3px'
 		bottomBracket.style.borderTop = '0'
 		root.appendChild(bottomBracket)
@@ -107,18 +117,24 @@ function createHTMLStructure(json) {
 		return root
 	}
 
-	const recursiveFunction = (object, visited = new Set())=>{
+	const recursiveFunction = (object, visited = new Set(), replaceMe=(newValue)=>{json = newValue})=>{
 		if (typeof object !== 'object' || object === null) {
-			return createValueElement(object)
+			const valueElement = createValueElement(object)
+			elementCreationFunction(valueElement, object, replaceMe)
+			return valueElement
 		}
 		visited.add(object)
 		if (Array.isArray(object)) {
-			return createArrayElement(object.map(element=>{
+			const arrayElement = createArrayElement(object.map((element, index)=>{
 				if (visited.has(element)) {
-					return createValueElement('visited')
+					const valueElement = createValueElement('visited')
+					elementCreationFunction(valueElement, element, replaceMe)
+					return valueElement
 				}
-				return recursiveFunction(element, visited)
+				return recursiveFunction(element, visited, (newValue)=>{object[index] = newValue})
 			}))
+			elementCreationFunction(arrayElement, object, replaceMe)
+			return arrayElement
 		}else{
 			const elements = []
 			const keys = []
@@ -129,12 +145,16 @@ function createHTMLStructure(json) {
 				const element = object[key];
 				keys.push(key)
 				if (visited.has(element)) {
-					elements.push(createValueElement('visited'))
+					const valueElement = createValueElement('visited')
+					elementCreationFunction(valueElement, element, replaceMe)
+					elements.push(valueElement)
 				}else{
-					elements.push(recursiveFunction(element, visited))
+					elements.push(recursiveFunction(element, visited, (newValue)=>{object[key] = newValue}))
 				}
 			}
-			return createObjectElement(elements, keys)
+			const objectElement = createObjectElement(elements, keys)
+			elementCreationFunction(objectElement, object, replaceMe)
+			return objectElement
 		}
 	}
 
@@ -146,5 +166,19 @@ function createHTMLStructure(json) {
 
 fetchJSON('structure.json').then(response=>{
 	console.log(response)
-	dataStructureContainer.appendChild(createHTMLStructure(response))
+	dataStructureContainer.appendChild(createHTMLStructure(response, (valueElement, data, replaceMe)=>{
+		if (!(valueElement instanceof HTMLElement)) {
+			throw new Error("valueElement is not an instance of HTMLElement");
+		}
+		if (typeof replaceMe !== 'function') {
+			console.error(replaceMe)
+			throw new Error("replaceMe is not a function");
+		}
+		valueElement.addEventListener('click',e=>{
+			e.stopPropagation()
+			console.log('click',valueElement, data, replaceMe)
+			replaceMe('kill')
+			console.log(response)
+		})
+	}))
 })

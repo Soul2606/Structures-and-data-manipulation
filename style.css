@@ -1,6 +1,6 @@
 body{
-    background-color: rgb(37, 38, 41);
-    color: white;
+    background-color: rgb(32, 32, 34);
+    color: lightskyblue ;
 }
 
 p{
@@ -8,8 +8,8 @@ p{
 }
 
 .object{
-    border-top: solid white 2px;
-    border-bottom: solid white 2px;
+    border-top: solid yellow 2px;
+    border-bottom: solid yellow 2px;
     border-radius: 15px;
     display: grid;
     grid-template-columns: auto auto;
@@ -20,6 +20,7 @@ p{
 .object-key{
     padding: 0 15px;
     grid-column: 1/2;
+    text-align: end;
 }
 
 .object-value{
@@ -31,6 +32,14 @@ p{
     margin: 0 5px;
 }
 
+.array{
+    background-color: rgb(32, 32, 34);
+}
+
 .array-index{
     padding-right: 6px;
+}
+
+.value{
+    color: royalblue;
 }
