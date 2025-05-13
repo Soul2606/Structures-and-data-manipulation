@@ -44,19 +44,16 @@ function createHTMLStructure(json) {
 		for (let i = 0; i < elements.length; i++) {
 			const element = elements[i]
 			const key = keys[i]
-			const item = document.createElement('div')
-			item.className = 'key-value-pair'
-			root.appendChild(item)
 
 			const keyElement = document.createElement('p')
 			keyElement.className = 'object-key'
 			keyElement.textContent = key
-			item.appendChild(keyElement)
+			root.appendChild(keyElement)
 
 			const elementContainer = document.createElement('div')
 			elementContainer.className = 'object-value'
 			elementContainer.appendChild(element)
-			item.appendChild(elementContainer)
+			root.appendChild(elementContainer)
 		}
 
 		return root
@@ -69,6 +66,13 @@ function createHTMLStructure(json) {
 		const root = document.createElement('div')
 		root.className = 'array'
 
+		const topBracket = document.createElement('div')
+		topBracket.style.height = '8px'
+		topBracket.style.border = 'solid white 2px'
+		topBracket.style.borderRadius = '3px 3px 0 0'
+		topBracket.style.borderBottom = '0'
+		root.appendChild(topBracket)
+
 		for (let i = 0; i < elements.length; i++) {
 			const element = elements[i]
 			const item = document.createElement('div')
@@ -77,7 +81,7 @@ function createHTMLStructure(json) {
 
 			const indexElement = document.createElement('p')
 			indexElement.className = 'array-index'
-			indexElement.textContent = i
+			indexElement.textContent = i + ':'
 			item.appendChild(indexElement)
 
 			const elementContainer = document.createElement('div')
@@ -85,6 +89,13 @@ function createHTMLStructure(json) {
 			elementContainer.appendChild(element)
 			item.appendChild(elementContainer)
 		}
+
+		const bottomBracket = document.createElement('div')
+		bottomBracket.style.height = '8px'
+		bottomBracket.style.border = 'solid white 2px'
+		bottomBracket.style.borderRadius = '0 0 3px 3px'
+		bottomBracket.style.borderTop = '0'
+		root.appendChild(bottomBracket)
 		
 		return root
 	}
@@ -92,12 +103,12 @@ function createHTMLStructure(json) {
 	const createValueElement = (value)=>{
 		const root = document.createElement('p')
 		root.className = 'value'
-		root.textContent = value
+		root.textContent = String(value)
 		return root
 	}
 
 	const recursiveFunction = (object, visited = new Set())=>{
-		if (typeof object !== 'object') {
+		if (typeof object !== 'object' || object === null) {
 			return createValueElement(object)
 		}
 		visited.add(object)
@@ -126,6 +137,8 @@ function createHTMLStructure(json) {
 			return createObjectElement(elements, keys)
 		}
 	}
+
+	return recursiveFunction(json)
 }
 
 

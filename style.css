@@ -1,0 +1,36 @@
+body{
+    background-color: rgb(37, 38, 41);
+    color: white;
+}
+
+p{
+    margin: 6px 0;
+}
+
+.object{
+    border-top: solid white 2px;
+    border-bottom: solid white 2px;
+    border-radius: 15px;
+    display: grid;
+    grid-template-columns: auto auto;
+    align-items: center;
+    padding: 15px 0;
+}
+
+.object-key{
+    padding: 0 15px;
+    grid-column: 1/2;
+}
+
+.object-value{
+    grid-column: 2/3;
+}
+
+.index-value{
+    display: flex;
+    margin: 0 5px;
+}
+
+.array-index{
+    padding-right: 6px;
+}

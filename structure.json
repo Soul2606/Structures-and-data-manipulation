@@ -1,1 +1,11 @@
-{"hello":"hello"}
+{"text":"hello",
+"array":[1,2,3,4,5],
+"number":37,
+"bool":true,
+"null":null,
+"array nesting":[
+    1,
+    2,
+    ["a","b","c"],
+    3
+]}
