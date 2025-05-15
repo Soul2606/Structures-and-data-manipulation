@@ -8,9 +8,30 @@
     <script src="script.js" defer></script>
 </head>
 <body>
-    <div id="data-structure-container" style="width: min-content;"></div>
-    <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="50%" cy="50%" r="40%" stroke="white" stroke-width="4" fill="cornflowerblue"/>
-    </svg>
+    <main style="display: flex;">
+        <div id="data-structure-container" style="flex-grow: 0;"></div>
+        <div style="width: 50px;"></div>
+        <div style="flex-grow: 1;">
+            <p style="text-align: center;">Edit</p>
+            <div id="add-button-container" style="display: none;">
+                <button id="add-string">Add string</button>
+                <br>
+                <button id="add-number">Add number</button>
+                <br>
+                <button id="add-bool">Add boolean</button>
+                <br>
+                <button id="add-dictionary">Add dictionary</button>
+                <br>
+                <button id="add-array">Add array</button>
+                <br>
+                <button id="add-null">Add null</button>
+            </div>
+            <div id="set-string-container" style="display: none;">
+                <label for="set-string">String</label>
+                <input type="text" name="set-string" id="set-string" value="new string">
+                <button id="set-string-button">Set</button>
+            </div>
+        </div>
+    </main>
 </body>
 </html>

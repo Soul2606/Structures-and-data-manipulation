@@ -1,5 +1,5 @@
 {"text":"hello",
-"array":[1,2,3,4,5],
+"array":["a","b","c"],
 "number":37,
 "bool":true,
 "null":null,
