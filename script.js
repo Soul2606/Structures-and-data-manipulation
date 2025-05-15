@@ -65,10 +65,7 @@ function createHTMLStructure(json, elementCreationFunction=()=>{}) {
 			const element = elements[i]
 			const key = keys[i]
 
-			const keyElement = document.createElement('p')
-			keyElement.className = 'object-key'
-			keyElement.innerHTML = key + '<span style="color: white; margin-left: 5px;">:</span>'
-			root.appendChild(keyElement)
+			root.appendChild(key)
 
 			const elementContainer = document.createElement('div')
 			elementContainer.className = 'object-value'
@@ -76,6 +73,13 @@ function createHTMLStructure(json, elementCreationFunction=()=>{}) {
 			root.appendChild(elementContainer)
 		}
 
+		return root
+	}
+
+	const createKeyElement = (keyName)=>{
+		const root = document.createElement('p')
+		root.className = 'object-key'
+		root.innerHTML = keyName + '<span style="color: white; margin-left: 5px;">:</span>'
 		return root
 	}
 
@@ -165,13 +169,15 @@ function createHTMLStructure(json, elementCreationFunction=()=>{}) {
 			return arrayElement
 		}else{
 			const elements = []
-			const keys = []
+			const keyElements = []
 			for (const key in object) {
 				if (!Object.prototype.hasOwnProperty.call(object, key)) {
 					continue
 				}
 				const element = object[key];
-				keys.push(key)
+				const keyElement = createKeyElement(key)
+				elementCreationFunction(keyElement, key, ()=>{}, object)
+				keyElements.push(keyElement)
 				if (visited.has(element)) {
 					const valueElement = createValueElement('visited')
 					elementCreationFunction(valueElement, element, replaceMe, parent)
@@ -180,7 +186,7 @@ function createHTMLStructure(json, elementCreationFunction=()=>{}) {
 					elements.push(recursiveFunction(element, visited, (newValue)=>{object[key] = newValue}, {data:object, replaceMe, parent}))
 				}
 			}
-			const objectElement = createObjectElement(elements, keys)
+			const objectElement = createObjectElement(elements, keyElements)
 			elementCreationFunction(objectElement, object, replaceMe, parent)
 			return objectElement
 		}
