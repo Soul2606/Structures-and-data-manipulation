@@ -24,7 +24,7 @@ p{
     text-align: end;
 }
 
-.object-value{
+.object-value-container{
     grid-column: 2/3;
 }
 
@@ -52,7 +52,7 @@ p{
     color: royalblue;
 }
 
-.value.string{
+.string{
     color: rgb(255, 145, 90);
 }
 
