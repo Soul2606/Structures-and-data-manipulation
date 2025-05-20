@@ -16,6 +16,8 @@ p{
     row-gap: 10px;
     align-items: center;
     padding: 15px 0;
+    width: min-content;
+    min-width: 30px;
 }
 
 .object-key{
@@ -30,6 +32,7 @@ p{
 
 .array{
     width: min-content;
+    min-width: 30px;
 }
 
 .array-bracket{
@@ -37,6 +40,7 @@ p{
 }
 
 .array-grid{
+    min-height: 10px;
     display: grid;
     grid-template-columns: auto auto;
     row-gap: 10px;

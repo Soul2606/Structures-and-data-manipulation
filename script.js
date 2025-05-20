@@ -156,7 +156,7 @@ function createHTMLStructure(json, elementCreationFunction=()=>{}) {
 		return root
 	}
 
-	const recursiveFunction = (object, visited = new Set(), replaceMe=(newValue)=>{jsonDatastructure = newValue}, parent=null)=>{
+	const recursiveFunction = (object, visited = new Set(), replaceMe=(newValue)=>{json = newValue;return json}, parent=null)=>{
 		if (typeof object !== 'object' || object === null) {
 			const valueElement = createValueElement(object)
 			elementCreationFunction(valueElement, object, replaceMe, parent)
@@ -170,7 +170,7 @@ function createHTMLStructure(json, elementCreationFunction=()=>{}) {
 					elementCreationFunction(valueElement, element, replaceMe, parent)
 					return valueElement
 				}
-				return recursiveFunction(element, visited, (newValue)=>{object[index] = newValue}, {data:object, replaceMe, parent})
+				return recursiveFunction(element, visited, (newValue)=>{object[index] = newValue; return json}, {data:object, replaceMe, parent})
 			}))
 			elementCreationFunction(arrayElement, object, replaceMe, parent)
 			return arrayElement
@@ -190,7 +190,7 @@ function createHTMLStructure(json, elementCreationFunction=()=>{}) {
 					elementCreationFunction(valueElement, element, replaceMe, parent)
 					elements.push(valueElement)
 				}else{
-					elements.push(recursiveFunction(element, visited, (newValue)=>{object[key] = newValue}, {data:object, replaceMe, parent}))
+					elements.push(recursiveFunction(element, visited, (newValue)=>{object[key] = newValue; return json}, {data:object, replaceMe, parent}))
 				}
 			}
 			const objectElement = createObjectElement(elements, keyElements)
@@ -275,8 +275,6 @@ function changeKey(object, oldKey, newKey) {
 	if (object.hasOwnProperty(newKey)) {
 		return object
 	}
-	//object[newKey] = object[oldKey]
-	//delete object[oldKey]
 	return Object.fromEntries(Object.entries(object).map(([key,value])=>key === oldKey ? [newKey,value] : [key,value]))
 }
 
@@ -304,7 +302,7 @@ function deserializeJSON(json) {
 			keyElement.setAttribute('contenteditable','true')
 			editableTextModule(keyElement, (element, newContent, oldContent)=>{
 				console.log(parent)
-				parent.replaceMe(changeKey(parent.data, oldContent, newContent))
+				jsonDatastructure = parent.replaceMe(changeKey(parent.data, oldContent, newContent))
 				deserializeJSON(jsonDatastructure)
 			})
 		}
@@ -354,9 +352,35 @@ fetchJSON('structure.json').then(response=>{
 		}
 		deserializeJSON(jsonDatastructure)
 	})
+
+	addArray.addEventListener('click',()=>{
+		const data = selected.data
+		if (Array.isArray(data)) {
+			data.push([])
+		}else if (typeof data === 'object') {
+			data['key'] = []
+		}else{
+			console.error(data, selected)
+			throw new Error("data is not an object");
+		}
+		deserializeJSON(jsonDatastructure)
+	})
+
+	addDictionary.addEventListener('click',()=>{
+		const data = selected.data
+		if (Array.isArray(data)) {
+			data.push({})
+		}else if (typeof data === 'object') {
+			data['key'] = {}
+		}else{
+			console.error(data, selected)
+			throw new Error("data is not an object");
+		}
+		deserializeJSON(jsonDatastructure)
+	})
 	
 	setStringButton.addEventListener('click',()=>{
-		selected.replaceMe(setString.value)
+		jsonDatastructure = selected.replaceMe(setString.value)
 		deserializeJSON(jsonDatastructure)
 	})
 })
