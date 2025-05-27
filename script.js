@@ -273,8 +273,6 @@ function changeKey(object, oldKey, newKey) {
 	if (object.hasOwnProperty(newKey)) {
 		return object
 	}
-	//object[newKey] = object[oldKey]
-	//delete object[oldKey]
 	return Object.fromEntries(Object.entries(object).map(([key,value])=>key === oldKey ? [newKey,value] : [key,value]))
 }
 
