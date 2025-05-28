@@ -8,6 +8,38 @@ p{
     text-wrap: nowrap;
 }
 
+.arrow-icon{
+    animation: none;
+    width: 15px;
+    transform: rotate(180deg);
+}
+
+@keyframes rotate-right {
+  from {
+    transform: rotate(180deg);
+  }
+  to {
+    transform: rotate(90deg);
+  }
+}
+
+.arrow-icon-right{
+    animation: rotate-right 0.5s forwards;
+}
+
+@keyframes rotate-down {
+  from {
+    transform: rotate(90deg);
+  }
+  to {
+    transform: rotate(180deg);
+  }
+}
+
+.arrow-icon-down{
+    animation: rotate-down 0.5s forwards;
+}
+
 .object{
     border-top: solid yellow 2px;
     border-bottom: solid yellow 2px;
@@ -49,8 +81,10 @@ p{
     height: 15px;
     border: none;
     border-radius: 3px;
-    background-color: gray;
+    background-color: rgba(0, 0, 0, 0);
     margin: auto;
+    display: flex;
+    justify-content: center;
 }
 
 .array-grid{

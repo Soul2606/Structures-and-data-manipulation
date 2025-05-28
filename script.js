@@ -43,6 +43,13 @@ function createHTMLStructure(json, elementCreationFunction=()=>{}) {
 		throw new Error("elementCreationFunction is not a function");
 	}
 
+	const createToggleDirectionButton = ()=>{
+		const root = document.createElement('button')
+		root.className = 'array-toggle-direction-button'
+		root.innerHTML = '<img src="img/triangle-shape-icon-gray.png" alt="arrow-icon" class="arrow-icon"></img>'
+		return root
+	}
+
 	const createObjectElement = (elements, keys)=>{
 		if (!Array.isArray(elements)) {
 			throw new Error("elements is not an array");
@@ -90,8 +97,7 @@ function createHTMLStructure(json, elementCreationFunction=()=>{}) {
 		const root = document.createElement('div')
 		root.className = 'array'
 
-		const toggleDirectionButton = document.createElement('button')
-		toggleDirectionButton.className = 'array-toggle-direction-button'
+		const toggleDirectionButton = createToggleDirectionButton()
 		root.appendChild(toggleDirectionButton)
 
 		const topBracket = document.createElement('div')
@@ -152,6 +158,7 @@ function createHTMLStructure(json, elementCreationFunction=()=>{}) {
 
 		toggleDirectionButton.addEventListener('click',e=>{
 			e.stopPropagation()
+			const icon = toggleDirectionButton.firstChild
 			if (root.style.flexDirection === 'row') {
 				root.style.flexDirection = 'column'
 				arrayGrid.classList.add('array-grid')
@@ -160,6 +167,8 @@ function createHTMLStructure(json, elementCreationFunction=()=>{}) {
 				bottomBracket.style.display = ''
 				leftBracket.style.display = 'none'
 				rightBracket.style.display = 'none'
+				icon.classList.add('arrow-icon-down')
+				icon.classList.remove('arrow-icon-right')
 			}else{
 				root.style.flexDirection = 'row'
 				arrayGrid.classList.add('array-flexbox')
@@ -168,6 +177,8 @@ function createHTMLStructure(json, elementCreationFunction=()=>{}) {
 				bottomBracket.style.display = 'none'
 				leftBracket.style.display = ''
 				rightBracket.style.display = ''
+				icon.classList.add('arrow-icon-right')
+				icon.classList.remove('arrow-icon-down')
 			}
 		})
 
