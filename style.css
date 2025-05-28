@@ -5,6 +5,7 @@ body{
 
 p{
     margin: 0;
+    text-wrap: nowrap;
 }
 
 .object{
@@ -33,10 +34,23 @@ p{
 .array{
     width: min-content;
     min-width: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
 }
 
 .array-bracket{
     border: solid magenta 2px;
+}
+
+.array-toggle-direction-button{
+    cursor: pointer;
+    width: 15px;
+    height: 15px;
+    border: none;
+    border-radius: 3px;
+    background-color: gray;
+    margin: auto;
 }
 
 .array-grid{
@@ -47,9 +61,37 @@ p{
     align-items: center;
 }
 
+.array-flexbox{
+    display: flex;
+    align-items: center;
+    margin: 3px 0;
+}
+
+.array-flexbox > .array-value{
+    margin: 0 3px;
+}
+
 .array-index{
     padding-right: 6px;
     text-align: end;
+    grid-column: 1/2;
+}
+
+.array-flexbox > .array-index{
+    display: none;
+}
+
+.array-value{
+    grid-column: 2/3;
+}
+
+.array-comma{
+    color: gray;
+    font-size: x-large;
+}
+
+.array-grid > .array-comma{
+    display: none;
 }
 
 .value{

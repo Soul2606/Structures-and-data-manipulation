@@ -90,6 +90,10 @@ function createHTMLStructure(json, elementCreationFunction=()=>{}) {
 		const root = document.createElement('div')
 		root.className = 'array'
 
+		const toggleDirectionButton = document.createElement('button')
+		toggleDirectionButton.className = 'array-toggle-direction-button'
+		root.appendChild(toggleDirectionButton)
+
 		const topBracket = document.createElement('div')
 		topBracket.className = 'array-bracket'
 		topBracket.style.height = '8px'
@@ -97,23 +101,47 @@ function createHTMLStructure(json, elementCreationFunction=()=>{}) {
 		topBracket.style.borderBottom = '0'
 		root.appendChild(topBracket)
 
+		const leftBracket = document.createElement('div')
+		leftBracket.className = 'array-bracket'
+		leftBracket.style.width = '8px'
+		leftBracket.style.borderRadius = '3px 0 0 3px'
+		leftBracket.style.borderRight = '0'
+		leftBracket.style.display = 'none'
+		root.appendChild(leftBracket)
+
 		const arrayGrid = document.createElement('div')
 		arrayGrid.className = 'array-grid'
 		root.appendChild(arrayGrid)
 
+		const indexElements = []
 		for (let i = 0; i < elements.length; i++) {
 			const element = elements[i]
 
 			const indexElement = document.createElement('p')
 			indexElement.className = 'array-index'
-			indexElement.innerHTML = i + '<span style="color: white; margin-left: 5px;">:</span>'
+			indexElement.innerHTML = i + '<span style="color: white; margin-left: 1px;">:</span>'
 			arrayGrid.appendChild(indexElement)
+			indexElements.push(indexElement)
+			
+			if (i !== 0){
+			const arrayComma = document.createElement('div')
+			arrayComma.className = 'array-comma'
+			arrayComma.textContent = ','
+			arrayGrid.appendChild(arrayComma)}
 
 			const elementContainer = document.createElement('div')
 			elementContainer.className = 'array-value'
 			elementContainer.appendChild(element)
 			arrayGrid.appendChild(elementContainer)
 		}
+	
+		const rightBracket = document.createElement('div')
+		rightBracket.className = 'array-bracket'
+		rightBracket.style.width = '8px'
+		rightBracket.style.borderRadius = '0 3px 3px 0'
+		rightBracket.style.borderLeft = '0'
+		rightBracket.style.display = 'none'
+		root.appendChild(rightBracket)
 
 		const bottomBracket = document.createElement('div')
 		bottomBracket.className = 'array-bracket'
@@ -121,7 +149,28 @@ function createHTMLStructure(json, elementCreationFunction=()=>{}) {
 		bottomBracket.style.borderRadius = '0 0 3px 3px'
 		bottomBracket.style.borderTop = '0'
 		root.appendChild(bottomBracket)
-		
+
+		toggleDirectionButton.addEventListener('click',e=>{
+			e.stopPropagation()
+			if (root.style.flexDirection === 'row') {
+				root.style.flexDirection = 'column'
+				arrayGrid.classList.add('array-grid')
+				arrayGrid.classList.remove('array-flexbox')
+				topBracket.style.display = ''
+				bottomBracket.style.display = ''
+				leftBracket.style.display = 'none'
+				rightBracket.style.display = 'none'
+			}else{
+				root.style.flexDirection = 'row'
+				arrayGrid.classList.add('array-flexbox')
+				arrayGrid.classList.remove('array-grid')
+				topBracket.style.display = 'none'
+				bottomBracket.style.display = 'none'
+				leftBracket.style.display = ''
+				rightBracket.style.display = ''
+			}
+		})
+
 		return root
 	}
 
@@ -318,7 +367,6 @@ function deserializeJSON(json, elementSelectionFunction, jsonChangeFunction) {
 			const keyElement = element.firstChild
 			keyElement.setAttribute('contenteditable','true')
 			editableTextModule(keyElement, (element, newContent, oldContent)=>{
-				console.log(parent)
 				const newStructure = parent.replaceMe(changeKey(parent.data, oldContent, newContent))
 				jsonChangeFunction(newStructure)
 				deserializeJSON(newStructure, elementSelectionFunction, jsonChangeFunction)
@@ -354,10 +402,7 @@ function deserializeJSON(json, elementSelectionFunction, jsonChangeFunction) {
 					Number.isNaN(Number(newContent))? newValue=paresString(newContent) : newValue=Number(newContent)
 					break;
 				}
-				console.log(String(newContent) + '')
-				console.log(newValue)
 				const newStructure = replaceMe(newValue)
-				console.log(structuredClone(newStructure))
 				jsonChangeFunction(newStructure)
 				deserializeJSON(newStructure, elementSelectionFunction, jsonChangeFunction)
 			})
@@ -387,7 +432,7 @@ fetchJSON('structure.json').then(response=>{
 	}
 	
 	addValue.addEventListener('click',()=>{
-		const data = selected.data
+		const data = structuredClone(selected.data)
 		if (Array.isArray(data)) {
 			data.push(null)
 		}else if (typeof data === 'object') {
@@ -396,6 +441,17 @@ fetchJSON('structure.json').then(response=>{
 			console.error(data, selected)
 			throw new Error("data is not an object");
 		}
+		jsonDatastructure = selected.replaceMe(data)
+		deserializeJSON(jsonDatastructure, elementSelected, jsonChangeFunction)
+	})
+
+	addDictionary.addEventListener('click',()=>{
+		const data = structuredClone(selected.data)
+		if (Array.isArray(data)) {
+			data.push({})
+		}else if (typeof data === 'object') {
+			data['key'] = {}
+		}else{return}
 		jsonDatastructure = selected.replaceMe(data)
 		deserializeJSON(jsonDatastructure, elementSelected, jsonChangeFunction)
 	})
