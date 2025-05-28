@@ -149,7 +149,15 @@ function createHTMLStructure(json, elementCreationFunction=()=>{}) {
 		return root
 	}
 
-	const recursiveFunction = (object, visited = new Set(), replaceMe=(newValue)=>{json = newValue; return json}, parent=null)=>{
+	const mutateReturnUndo = (root,object,key,newValue)=>{
+		const oldValue = object[key]
+		object[key] = newValue
+		const mutatedClone = structuredClone(root)
+		object[key] = oldValue
+		return mutatedClone
+	}
+
+	const recursiveFunction = (object, visited = new Set(), replaceMe=(newValue)=>newValue, parent=null)=>{
 		if (typeof object !== 'object' || object === null) {
 			const valueElement = createValueElement(object)
 			elementCreationFunction(valueElement, object, replaceMe, parent)
@@ -163,7 +171,7 @@ function createHTMLStructure(json, elementCreationFunction=()=>{}) {
 					elementCreationFunction(valueElement, element, replaceMe, parent)
 					return valueElement
 				}
-				return recursiveFunction(element, visited, (newValue)=>{object[index] = newValue; return json}, {data:object, replaceMe, parent})
+				return recursiveFunction(element, visited, (newValue)=>mutateReturnUndo(json,object,index,newValue), {data:object, replaceMe, parent})
 			}))
 			elementCreationFunction(arrayElement, object, replaceMe, parent)
 			return arrayElement
@@ -183,7 +191,7 @@ function createHTMLStructure(json, elementCreationFunction=()=>{}) {
 					elementCreationFunction(valueElement, element, replaceMe, parent)
 					elements.push(valueElement)
 				}else{
-					elements.push(recursiveFunction(element, visited, (newValue)=>{object[key] = newValue; return json}, {data:object, replaceMe, parent}))
+					elements.push(recursiveFunction(element, visited, (newValue)=>mutateReturnUndo(json,object,key,newValue), {data:object, replaceMe, parent}))
 				}
 			}
 			const objectElement = createObjectElement(elements, keyElements)
